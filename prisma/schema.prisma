@@ -11,15 +11,17 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String         @id @default(cuid())
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
   email     String
   name      String
   password  String
   photo     String
   slug      String
   recipes   Recipe[]
+  notes     ShoppingNote[]
+  bookmarks Bookmarks[]
 }
 
 enum RecipeMainCategory {
@@ -27,7 +29,7 @@ enum RecipeMainCategory {
   Minuman
 }
 
-model RecipeSecondCategory {
+model RecipeCategory {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -37,14 +39,14 @@ model RecipeSecondCategory {
 }
 
 model Recipe {
-  id               String               @id @default(cuid())
-  createdAt        DateTime             @default(now())
-  updatedAt        DateTime             @updatedAt
+  id               String             @id @default(cuid())
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
   mainCategory     RecipeMainCategory
   secondCategoryId String
-  secondCategory   RecipeSecondCategory @relation(fields: [secondCategoryId], references: [id])
+  secondCategory   RecipeCategory     @relation(fields: [secondCategoryId], references: [id])
   authorId         String
-  author           User                 @relation(fields: [authorId], references: [id])
+  author           User               @relation(fields: [authorId], references: [id])
   title            String
   photo            String
   description      String
@@ -57,4 +59,25 @@ model Recipe {
   estimatedTime    Int
   step             String
   fullContent      String
+  ookmarks         Bookmarks[]
+}
+
+model ShoppingNote {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  title       String
+  description String
+}
+
+model Bookmarks {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  recipeId  String
+  recipe    Recipe   @relation(fields: [recipeId], references: [id])
 }
