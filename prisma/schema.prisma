@@ -1,4 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  email     String
+  name      String
+  password  String
+  photo     String
+  slug      String
+  recipes   Recipe[]
+}
+
+enum RecipeMainCategory {
+  Makanan
+  Minuman
+}
+
+model RecipeSecondCategory {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String   @unique
+  slug      String   @unique
+  recipes   Recipe[]
+}
+
+model Recipe {
+  id               String               @id @default(cuid())
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  mainCategory     RecipeMainCategory
+  secondCategoryId String
+  secondCategory   RecipeSecondCategory @relation(fields: [secondCategoryId], references: [id])
+  authorId         String
+  author           User                 @relation(fields: [authorId], references: [id])
+  title            String
+  photo            String
+  description      String
+  password         String
+  slug             String
+  totalServing     Int
+  mainIngredient   String[]
+  spices           String[]
+  utensils         String[]
+  estimatedTime    Int
+  step             String
+  fullContent      String
 }
