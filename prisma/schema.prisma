@@ -14,11 +14,11 @@ model User {
   id        String         @id @default(cuid())
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
-  email     String
-  name      String
+  email     String         @unique
+  name      String         @unique
   password  String
   photo     String
-  slug      String
+  slug      String         @unique
   recipes   Recipe[]
   notes     ShoppingNote[]
   bookmarks Bookmarks[]
@@ -50,8 +50,7 @@ model Recipe {
   title            String
   photo            String
   description      String
-  password         String
-  slug             String
+  slug             String             @unique
   totalServing     Int
   mainIngredient   String[]
   spices           String[]
@@ -59,7 +58,7 @@ model Recipe {
   estimatedTime    Int
   step             String
   fullContent      String
-  ookmarks         Bookmarks[]
+  bookmarks        Bookmarks[]
 }
 
 model ShoppingNote {
