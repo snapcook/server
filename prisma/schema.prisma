@@ -10,6 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   id        String         @id @default(cuid())
   createdAt DateTime       @default(now())
@@ -19,6 +24,7 @@ model User {
   password  String
   photo     String
   slug      String         @unique
+  role      Role           @default(USER)
   recipes   Recipe[]
   notes     ShoppingNote[]
   bookmarks Bookmarks[]
