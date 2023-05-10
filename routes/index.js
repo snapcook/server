@@ -1,6 +1,7 @@
 const { Router } = require('express');
-const CategoryRouter = require('./category');
 const AuthRouter = require('./auth');
+const UserRouter = require('./user');
+const CategoryRouter = require('./category');
 
 const router = Router();
 
@@ -9,6 +10,7 @@ router.get('/', (req, res) => {
 });
 
 router.use(AuthRouter);
+router.use(UserRouter);
 router.use(CategoryRouter);
 
 module.exports = router;
