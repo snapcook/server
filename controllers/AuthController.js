@@ -48,7 +48,6 @@ class AuthController {
             token: generateToken({
               name: user.name,
               email: user.email,
-              contact: user.contact,
               role: user.role,
             }),
           });
@@ -60,6 +59,15 @@ class AuthController {
       }
     } catch (error) {
       next(error);
+    }
+  }
+
+  static async logout(req, res) {
+    const authorization = req.headers.authorization;
+
+    if (authorization !== '') {
+      req.headers.authorization = '';
+      return res.status(401).json({ message: 'Logged Out' });
     }
   }
 }
