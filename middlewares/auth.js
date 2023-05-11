@@ -15,20 +15,28 @@ function authentication(req, res, next) {
   }
 }
 
+function adminAuthorization(req, res, next) {
+  const loggedUser = req.loggedUser;
+
+  if (loggedUser.role === 'ADMIN') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Forbidden access' });
+  }
+}
+
 async function userAuthorization(req, res, next) {
   const loggedUser = req.loggedUser;
 
   if (loggedUser) {
-    // Define the data cannot accesed by other users
-    const shoppingNoteId = req.params.id;
-
-    const findNote = await prisma.bookmarks.findUnique({
+    const userId = req.params.id;
+    const findUser = await prisma.user.findUnique({
       where: {
-        id: shoppingNoteId,
+        id: userId,
       },
     });
 
-    const validUser = loggedUser.id === findNote.authorId;
+    const validUser = loggedUser.id === findUser.id;
 
     if (validUser) {
       next();
@@ -37,16 +45,6 @@ async function userAuthorization(req, res, next) {
     }
   } else {
     res.status(400).json({ message: 'Invalid auth' });
-  }
-}
-
-function adminAuthorization(req, res, next) {
-  const loggedUser = req.loggedUser;
-
-  if (loggedUser.role === 'ADMIN') {
-    next();
-  } else {
-    res.status(403).json({ message: 'Forbidden access' });
   }
 }
 

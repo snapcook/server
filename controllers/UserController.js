@@ -5,7 +5,13 @@ const slugify = require('slugify');
 class UserController {
   static async list(req, res) {
     const result = await prisma.user.findMany({});
-    res.status(200).json(result);
+
+    const user = result.map((data) => {
+      const { password, ...rest } = data;
+      return rest;
+    });
+
+    res.status(200).json(user);
   }
 
   static async show(req, res) {
@@ -13,10 +19,11 @@ class UserController {
       where: { id: req.params.id },
     });
 
-    if (result === null) {
-      res.status(404).json({ message: 'Data not found' });
+    if (result) {
+      const { password, ...user } = result;
+      res.status(200).json(user);
     } else {
-      res.status(200).json(result);
+      res.status(404).json({ message: 'Data not found' });
     }
   }
 
@@ -32,7 +39,10 @@ class UserController {
           photo: req.body.photo,
         },
       });
-      res.status(200).json(result);
+      if (result) {
+        const { password, ...user } = result;
+        res.status(200).json(user);
+      }
     } catch (error) {
       next(error);
     }

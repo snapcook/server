@@ -46,6 +46,7 @@ class AuthController {
               role: user.role,
             },
             token: generateToken({
+              id: user.id,
               name: user.name,
               email: user.email,
               role: user.role,
