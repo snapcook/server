@@ -41,11 +41,12 @@ npx prisma generate
 npx prisma migrate dev
 ```
 
+6. Run seed
 ```sh
 npm run seed
 ```
 
-6. Run the project
+7. Run the project
 
 ```sh
 npm run dev
