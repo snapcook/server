@@ -1,7 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-
 const { decodeToken } = require('../helpers/jwt');
+
+const prisma = new PrismaClient();
 
 function authentication(req, res, next) {
   const authorization = req.headers.authorization;
@@ -48,4 +48,32 @@ async function userAuthorization(req, res, next) {
   }
 }
 
-module.exports = { authentication, userAuthorization, adminAuthorization };
+async function recipeAuthorization(req, res, next) {
+  const loggedUser = req.loggedUser;
+
+  if (loggedUser) {
+    const recipeId = req.params.id;
+    const findRecipe = await prisma.recipe.findUnique({
+      where: {
+        id: recipeId,
+      },
+    });
+
+    const validUser = loggedUser.id === findRecipe.authorId;
+
+    if (validUser) {
+      next();
+    } else {
+      res.status(403).json({ message: 'Forbidden access' });
+    }
+  } else {
+    res.status(400).json({ message: 'Invalid auth' });
+  }
+}
+
+module.exports = {
+  authentication,
+  userAuthorization,
+  adminAuthorization,
+  recipeAuthorization,
+};

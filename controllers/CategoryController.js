@@ -1,6 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
 const slugify = require('slugify');
+
+const prisma = new PrismaClient();
 
 class CategoryController {
   static async list(req, res) {
