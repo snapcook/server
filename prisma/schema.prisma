@@ -74,7 +74,7 @@ model ShoppingNote {
   authorId    String
   author      User     @relation(fields: [authorId], references: [id])
   title       String
-  description String
+  description String[]
 }
 
 model Bookmarks {
