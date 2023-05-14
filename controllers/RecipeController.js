@@ -17,6 +17,15 @@ class RecipeController {
         mainCategory: query.mainCategory,
         secondCategoryId: query.secondCategory,
       },
+      include: {
+        author: {
+          select: {
+            name: true,
+            photo: true,
+            slug: true,
+          },
+        },
+      },
     });
     res.status(200).json(result);
   }
@@ -24,6 +33,15 @@ class RecipeController {
   static async show(req, res) {
     const result = await prisma.recipe.findUnique({
       where: { id: req.params.id },
+      include: {
+        author: {
+          select: {
+            name: true,
+            photo: true,
+            slug: true,
+          },
+        },
+      },
     });
 
     if (result) {
