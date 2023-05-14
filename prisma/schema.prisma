@@ -58,12 +58,11 @@ model Recipe {
   description      String
   slug             String             @unique
   totalServing     Int
-  mainIngredient   String[]
+  mainIngredients  String[]
   spices           String[]
   utensils         String[]
   estimatedTime    Int
-  step             String
-  fullContent      String
+  steps            String[]
   bookmarks        Bookmarks[]
 }
 

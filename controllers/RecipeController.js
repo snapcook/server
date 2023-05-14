@@ -39,6 +39,7 @@ class RecipeController {
         data: {
           title: title,
           slug: `${slugify(title, { lower: true })}-${nanoid(6)}`,
+
           ...body,
         },
       });
