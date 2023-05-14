@@ -83,6 +83,6 @@ model Bookmarks {
   updatedAt DateTime @updatedAt
   authorId  String
   author    User     @relation(fields: [authorId], references: [id])
-  recipeId  String
+  recipeId  String   @unique
   recipe    Recipe   @relation(fields: [recipeId], references: [id])
 }

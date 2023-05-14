@@ -9,7 +9,7 @@ const router = Router();
 
 router.use(authentication);
 router.get('/recipe', RecipeController.list);
-router.get('/recipe/:id', RecipeController.show);
+router.get('/recipe/:slug', RecipeController.show);
 router.post('/recipe', RecipeController.store);
 router.put('/recipe/:id', recipeAuthorization, RecipeController.update);
 router.delete('/recipe/:id', recipeAuthorization, RecipeController.destroy);

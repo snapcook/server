@@ -32,7 +32,7 @@ class RecipeController {
 
   static async show(req, res) {
     const result = await prisma.recipe.findUnique({
-      where: { id: req.params.id },
+      where: { slug: req.params.slug },
       include: {
         author: {
           select: {

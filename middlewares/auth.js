@@ -71,9 +71,33 @@ async function recipeAuthorization(req, res, next) {
   }
 }
 
+async function bookmarkAuthorization(req, res, next) {
+  const loggedUser = req.loggedUser;
+
+  if (loggedUser) {
+    const bookmarkId = req.params.id;
+    const findBookmark = await prisma.bookmarks.findUnique({
+      where: {
+        id: bookmarkId,
+      },
+    });
+
+    const validUser = loggedUser.id === findBookmark.authorId;
+
+    if (validUser) {
+      next();
+    } else {
+      res.status(403).json({ message: 'Forbidden access' });
+    }
+  } else {
+    res.status(400).json({ message: 'Invalid auth' });
+  }
+}
+
 module.exports = {
   authentication,
   userAuthorization,
   adminAuthorization,
   recipeAuthorization,
+  bookmarkAuthorization,
 };
