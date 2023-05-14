@@ -6,17 +6,19 @@ const prisma = new PrismaClient();
 
 class RecipeController {
   static async list(req, res) {
-    const authorId = req.query.authorId;
+    const query = req.query;
 
-    if (authorId) {
-      const result = await prisma.recipe.findMany({
-        where: { authorId },
-      });
-      res.status(200).json(result);
-    } else {
-      const result = await prisma.recipe.findMany({});
-      res.status(200).json(result);
-    }
+    const result = await prisma.recipe.findMany({
+      where: {
+        authorId: query.authorId,
+        title: {
+          search: query.search?.split(' ').join(' | '),
+        },
+        mainCategory: query.mainCategory,
+        secondCategoryId: query.secondCategory,
+      },
+    });
+    res.status(200).json(result);
   }
 
   static async show(req, res) {
