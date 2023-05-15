@@ -94,10 +94,34 @@ async function bookmarkAuthorization(req, res, next) {
   }
 }
 
+async function noteAuthorization(req, res, next) {
+  const loggedUser = req.loggedUser;
+
+  if (loggedUser) {
+    const noteId = req.params.id;
+    const findUser = await prisma.shoppingNote.findUnique({
+      where: {
+        id: noteId,
+      },
+    });
+
+    const validUser = loggedUser.id === findUser.id;
+
+    if (validUser) {
+      next();
+    } else {
+      res.status(403).json({ message: 'Forbidden access' });
+    }
+  } else {
+    res.status(400).json({ message: 'Invalid auth' });
+  }
+}
+
 module.exports = {
   authentication,
   userAuthorization,
   adminAuthorization,
   recipeAuthorization,
   bookmarkAuthorization,
+  noteAuthorization,
 };
