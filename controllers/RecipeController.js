@@ -53,13 +53,14 @@ class RecipeController {
 
   static async store(req, res, next) {
     try {
-      const { title, slug, ...body } = req.body;
+      const { title, slug, totalServing, estimatedTime, ...body } = req.body;
 
       const result = await prisma.recipe.create({
         data: {
           title: title,
           slug: `${slugify(title, { lower: true })}-${nanoid(6)}`,
-
+          totalServing: Number(totalServing),
+          estimatedTime: Number(estimatedTime),
           ...body,
         },
       });
