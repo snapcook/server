@@ -29,15 +29,17 @@ class UserController {
   }
 
   static async update(req, res, next) {
+    const { name, photo } = req.body;
+
     try {
       const result = await prisma.user.update({
         where: {
           id: req.params.id,
         },
         data: {
-          name: req.body.name,
-          slug: slugify(req.body.name, { lower: true }),
-          photo: req.body.photo,
+          name: name,
+          slug: slugify(name, { lower: true }),
+          photo: req.file ? photo : undefined,
         },
       });
       if (result) {

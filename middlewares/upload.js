@@ -14,7 +14,7 @@ function imageUpload(req, res, next) {
         imagePath = `images/recipe/${user.id}_${nanoid(8)}_${
           file.originalname
         }`;
-      } else if (req.route.path === '/user') {
+      } else if (req.route.path === '/user/:id') {
         imagePath = `images/user/${user.id}_${nanoid(8)}_${file.originalname}`;
       }
 
