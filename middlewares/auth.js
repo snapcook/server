@@ -99,13 +99,13 @@ async function noteAuthorization(req, res, next) {
 
   if (loggedUser) {
     const noteId = req.params.id;
-    const findUser = await prisma.shoppingNote.findUnique({
+    const findNote = await prisma.shoppingNote.findUnique({
       where: {
         id: noteId,
       },
     });
 
-    const validUser = loggedUser.id === findUser.id;
+    const validUser = loggedUser.id === findNote.authorId;
 
     if (validUser) {
       next();

@@ -17,11 +17,11 @@ class AuthController {
           name: req.body.name,
           password: hashedPassword,
           slug: slugify(req.body.name, { lower: true }),
-          photo: req.body.photo,
+          photo: '',
         },
       });
-
-      return res.status(201).json(result);
+      const { password, ...user } = result;
+      return res.status(201).json(user);
     } catch (error) {
       next(error);
     }
@@ -68,7 +68,7 @@ class AuthController {
     const authorization = req.headers.authorization;
 
     if (authorization !== '') {
-      req.headers.authorization = '';
+      req.headers.authorization = undefined;
       return res.status(401).json({ message: 'Logged Out' });
     }
   }

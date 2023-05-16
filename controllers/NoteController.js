@@ -4,7 +4,11 @@ const prisma = new PrismaClient();
 
 class NoteController {
   static async list(req, res) {
-    const result = await prisma.shoppingNote.findMany({});
+    const loggedUser = req.loggedUser;
+
+    const result = await prisma.shoppingNote.findMany({
+      where: { authorId: loggedUser.id },
+    });
     res.status(200).json(result);
   }
 
@@ -24,8 +28,8 @@ class NoteController {
     try {
       const { ...body } = req.body;
 
-      const result = await prisma.shoppingNote.update({
-        data: { ...body }
+      const result = await prisma.shoppingNote.create({
+        data: { ...body },
       });
       res.status(201).json(result);
     } catch (error) {
