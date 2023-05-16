@@ -7,16 +7,21 @@ function imageUpload(req, res, next) {
     const user = req.loggedUser;
     const bucket = storage.bucket('snapcook-dev-storage');
 
-    let imagePath = '';
+    if (file) {
+      let imagePath = '';
 
-    if (req.route.path === '/recipe') {
-      imagePath = `images/recipe/${user.id}_${nanoid(8)}_${file.originalname}`;
-    } else if (req.route.path === '/user') {
-      imagePath = `images/user/${user.id}_${nanoid(8)}_${file.originalname}`;
+      if (req.route.path === '/recipe' || req.route.path === '/recipe/:id') {
+        imagePath = `images/recipe/${user.id}_${nanoid(8)}_${
+          file.originalname
+        }`;
+      } else if (req.route.path === '/user') {
+        imagePath = `images/user/${user.id}_${nanoid(8)}_${file.originalname}`;
+      }
+
+      bucket.file(imagePath).save(file.buffer);
+      req.body.photo = bucket.file(imagePath).publicUrl();
     }
 
-    bucket.file(imagePath).save(file.buffer);
-    req.body.photo = bucket.file(imagePath).publicUrl();
     next();
   } catch (error) {
     next(error);

@@ -36,12 +36,16 @@ async function userAuthorization(req, res, next) {
       },
     });
 
-    const validUser = loggedUser.id === findUser.id;
+    if (findUser) {
+      const validUser = loggedUser.id === findUser.id;
 
-    if (validUser) {
-      next();
+      if (validUser) {
+        next();
+      } else {
+        res.status(403).json({ message: 'Forbidden access' });
+      }
     } else {
-      res.status(403).json({ message: 'Forbidden access' });
+      res.status(404).json({ message: 'Data not found' });
     }
   } else {
     res.status(400).json({ message: 'Invalid auth' });
@@ -59,12 +63,16 @@ async function recipeAuthorization(req, res, next) {
       },
     });
 
-    const validUser = loggedUser.id === findRecipe.authorId;
+    if (findRecipe) {
+      const validUser = loggedUser.id === findRecipe.authorId;
 
-    if (validUser) {
-      next();
+      if (validUser) {
+        next();
+      } else {
+        res.status(403).json({ message: 'Forbidden access' });
+      }
     } else {
-      res.status(403).json({ message: 'Forbidden access' });
+      res.status(404).json({ message: 'Data not found' });
     }
   } else {
     res.status(400).json({ message: 'Invalid auth' });
@@ -82,12 +90,16 @@ async function bookmarkAuthorization(req, res, next) {
       },
     });
 
-    const validUser = loggedUser.id === findBookmark.authorId;
+    if (findBookmark) {
+      const validUser = loggedUser.id === findBookmark.authorId;
 
-    if (validUser) {
-      next();
+      if (validUser) {
+        next();
+      } else {
+        res.status(403).json({ message: 'Forbidden access' });
+      }
     } else {
-      res.status(403).json({ message: 'Forbidden access' });
+      res.status(404).json({ message: 'Data not found' });
     }
   } else {
     res.status(400).json({ message: 'Invalid auth' });
@@ -105,12 +117,16 @@ async function noteAuthorization(req, res, next) {
       },
     });
 
-    const validUser = loggedUser.id === findNote.authorId;
+    if (findNote) {
+      const validUser = loggedUser.id === findNote.authorId;
 
-    if (validUser) {
-      next();
+      if (validUser) {
+        next();
+      } else {
+        res.status(403).json({ message: 'Forbidden access' });
+      }
     } else {
-      res.status(403).json({ message: 'Forbidden access' });
+      res.status(404).json({ message: 'Data not found' });
     }
   } else {
     res.status(400).json({ message: 'Invalid auth' });

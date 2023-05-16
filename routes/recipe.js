@@ -20,7 +20,13 @@ router.post(
   imageUpload,
   RecipeController.store
 );
-router.put('/recipe/:id', recipeAuthorization, RecipeController.update);
+router.put(
+  '/recipe/:id',
+  recipeAuthorization,
+  upload.single('photo'),
+  imageUpload,
+  RecipeController.update
+);
 router.delete('/recipe/:id', recipeAuthorization, RecipeController.destroy);
 
 module.exports = router;

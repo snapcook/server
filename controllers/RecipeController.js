@@ -72,13 +72,18 @@ class RecipeController {
 
   static async update(req, res, next) {
     try {
-      const { ...body } = req.body;
+      const { photo, totalServing, estimatedTime, ...body } = req.body;
 
       const result = await prisma.recipe.update({
         where: {
           id: req.params.id,
         },
-        data: { ...body },
+        data: {
+          photo: req.file ? photo : undefined,
+          totalServing: Number(totalServing),
+          estimatedTime: Number(estimatedTime),
+          ...body,
+        },
       });
       res.status(200).json(result);
     } catch (error) {
