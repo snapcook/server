@@ -5,6 +5,7 @@ const CategoryRouter = require('./category');
 const RecipeRouter = require('./recipe');
 const BookmarkRouter = require('./bookmark');
 const NoteRouter = require('./note');
+const ModelRouter = require('./model');
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use(CategoryRouter);
 router.use(RecipeRouter);
 router.use(BookmarkRouter);
 router.use(NoteRouter);
+router.use(ModelRouter);
 
 module.exports = router;

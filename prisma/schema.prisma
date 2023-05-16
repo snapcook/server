@@ -46,25 +46,26 @@ model RecipeCategory {
 }
 
 model Recipe {
-  id               String             @id @default(cuid())
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  mainCategory     RecipeMainCategory
-  secondCategoryId String
-  secondCategory   RecipeCategory     @relation(fields: [secondCategoryId], references: [id])
-  authorId         String
-  author           User               @relation(fields: [authorId], references: [id])
-  title            String
-  photo            String
-  description      String
-  slug             String             @unique
-  totalServing     Int
-  mainIngredients  String[]
-  spices           String[]
-  utensils         String[]
-  estimatedTime    Int
-  steps            String[]
-  bookmarks        Bookmarks[]
+  id                    String             @id @default(cuid())
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+  mainCategory          RecipeMainCategory
+  secondCategoryId      String
+  secondCategory        RecipeCategory     @relation(fields: [secondCategoryId], references: [id])
+  authorId              String
+  author                User               @relation(fields: [authorId], references: [id])
+  title                 String
+  photo                 String
+  description           String
+  slug                  String             @unique
+  totalServing          Int
+  mainIngredients       String[]
+  searchMainIngredients String
+  spices                String[]
+  utensils              String[]
+  estimatedTime         Int
+  steps                 String[]
+  bookmarks             Bookmarks[]
 }
 
 model ShoppingNote {

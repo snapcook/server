@@ -27,7 +27,13 @@ class RecipeController {
         },
       },
     });
-    res.status(200).json(result);
+
+    const recipe = result.map((data) => {
+      const { searchMainIngredients, ...rest } = data;
+      return rest;
+    });
+
+    res.status(200).json(recipe);
   }
 
   static async show(req, res) {
@@ -53,7 +59,14 @@ class RecipeController {
 
   static async store(req, res, next) {
     try {
-      const { title, slug, totalServing, estimatedTime, ...body } = req.body;
+      const {
+        title,
+        slug,
+        totalServing,
+        estimatedTime,
+        mainIngredients,
+        ...body
+      } = req.body;
 
       const result = await prisma.recipe.create({
         data: {
@@ -61,10 +74,13 @@ class RecipeController {
           slug: `${slugify(title, { lower: true })}-${nanoid(6)}`,
           totalServing: Number(totalServing),
           estimatedTime: Number(estimatedTime),
+          mainIngredients: mainIngredients,
+          searchMainIngredients: mainIngredients.join(' '),
           ...body,
         },
       });
-      res.status(201).json(result);
+      const { searchMainIngredients, ...recipe } = result;
+      res.status(201).json(recipe);
     } catch (error) {
       next(error);
     }
@@ -72,7 +88,8 @@ class RecipeController {
 
   static async update(req, res, next) {
     try {
-      const { photo, totalServing, estimatedTime, ...body } = req.body;
+      const { photo, totalServing, estimatedTime, mainIngredients, ...body } =
+        req.body;
 
       const result = await prisma.recipe.update({
         where: {
@@ -82,10 +99,13 @@ class RecipeController {
           photo: req.file ? photo : undefined,
           totalServing: Number(totalServing),
           estimatedTime: Number(estimatedTime),
+          mainIngredients: mainIngredients,
+          searchMainIngredients: mainIngredients.join(' '),
           ...body,
         },
       });
-      res.status(200).json(result);
+      const { searchMainIngredients, ...recipe } = result;
+      res.status(201).json(recipe);
     } catch (error) {
       next(error);
     }
