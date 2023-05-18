@@ -1,21 +1,20 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient, Prisma } = require('@prisma/client');
 const slugify = require('slugify');
 
 const prisma = new PrismaClient();
 
 const { decodeHash, generateHash } = require('../helpers/bcrypt');
 const { generateToken } = require('../helpers/jwt');
+const { handlePrismaError } = require('../validators/PrismaValidator');
 
 class AuthController {
-  static async register(req, res, next) {
-    const hashedPassword = generateHash(req.body.password);
-
+  static async register(req, res) {
     try {
       const result = await prisma.user.create({
         data: {
           email: req.body.email,
           name: req.body.name,
-          password: hashedPassword,
+          password: generateHash(req.body.password),
           slug: slugify(req.body.name, { lower: true }),
           photo: '',
         },
@@ -23,11 +22,13 @@ class AuthController {
       const { password, ...user } = result;
       return res.status(201).json(user);
     } catch (error) {
-      next(error);
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        handlePrismaError(res, error);
+      }
     }
   }
 
-  static async login(req, res, next) {
+  static async login(req, res) {
     try {
       const { email, password } = req.body;
 
@@ -60,7 +61,7 @@ class AuthController {
         return res.status(404).json({ message: 'User not registered' });
       }
     } catch (error) {
-      next(error);
+      handlePrismaError(res, error);
     }
   }
 
