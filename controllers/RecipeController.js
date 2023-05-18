@@ -1,6 +1,8 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient, Prisma } = require('@prisma/client');
 const slugify = require('slugify');
 const { nanoid } = require('nanoid');
+
+const { handlePrismaError } = require('../validators/PrismaValidator');
 
 const prisma = new PrismaClient();
 
@@ -57,7 +59,7 @@ class RecipeController {
     }
   }
 
-  static async store(req, res, next) {
+  static async store(req, res) {
     try {
       const {
         title,
@@ -68,25 +70,31 @@ class RecipeController {
         ...body
       } = req.body;
 
-      const result = await prisma.recipe.create({
-        data: {
-          title: title,
-          slug: `${slugify(title, { lower: true })}-${nanoid(6)}`,
-          totalServing: Number(totalServing),
-          estimatedTime: Number(estimatedTime),
-          mainIngredients: mainIngredients,
-          searchMainIngredients: mainIngredients.join(' '),
-          ...body,
-        },
-      });
-      const { searchMainIngredients, ...recipe } = result;
-      res.status(201).json(recipe);
+      if (req.file) {
+        const result = await prisma.recipe.create({
+          data: {
+            title: title,
+            slug: `${slugify(title, { lower: true })}-${nanoid(6)}`,
+            totalServing: Number(totalServing),
+            estimatedTime: Number(estimatedTime),
+            mainIngredients: mainIngredients,
+            searchMainIngredients: mainIngredients.join(' '),
+            ...body,
+          },
+        });
+        const { searchMainIngredients, ...recipe } = result;
+        res.status(201).json(recipe);
+      } else {
+        return res.status(400).json({ message: 'Please upload a photo' });
+      }
     } catch (error) {
-      next(error);
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        handlePrismaError(res, error);
+      }
     }
   }
 
-  static async update(req, res, next) {
+  static async update(req, res) {
     try {
       const { photo, totalServing, estimatedTime, mainIngredients, ...body } =
         req.body;
@@ -107,7 +115,9 @@ class RecipeController {
       const { searchMainIngredients, ...recipe } = result;
       res.status(201).json(recipe);
     } catch (error) {
-      next(error);
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        handlePrismaError(res, error);
+      }
     }
   }
 

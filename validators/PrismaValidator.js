@@ -15,7 +15,7 @@ function handlePrismaError(res, err) {
     case 'P2003':
       // handling invalid data errors
       return res.status(400).json({
-        field: err.meta.target[0],
+        field: err.meta.field_name,
         message: 'Invalid input data',
       });
     default:

@@ -1,5 +1,7 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient, Prisma } = require('@prisma/client');
 const slugify = require('slugify');
+
+const { handlePrismaError } = require('../validators/PrismaValidator');
 
 const prisma = new PrismaClient();
 
@@ -33,13 +35,13 @@ class CategoryController {
       });
       res.status(201).json(result);
     } catch (error) {
-      if (error.code === 'P2002') {
-        res.status(400).json({ message: 'Category must unique' });
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        handlePrismaError(res, error);
       }
     }
   }
 
-  static async update(req, res, next) {
+  static async update(req, res) {
     try {
       const result = await prisma.recipeCategory.update({
         where: {
@@ -52,7 +54,9 @@ class CategoryController {
       });
       res.status(200).json(result);
     } catch (error) {
-      next(error);
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        handlePrismaError(res, error);
+      }
     }
   }
 
