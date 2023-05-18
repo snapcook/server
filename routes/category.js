@@ -1,4 +1,5 @@
 const { Router } = require('express');
+
 const CategoryController = require('../controllers/CategoryController');
 const ValidateCategory = require('../validators/CategoryValidator');
 const {

@@ -1,4 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient, Prisma } = require('@prisma/client');
+
+const { handlePrismaError } = require('../validators/PrismaValidator');
 
 const prisma = new PrismaClient();
 
@@ -24,7 +26,7 @@ class NoteController {
     }
   }
 
-  static async store(req, res, next) {
+  static async store(req, res) {
     try {
       const { ...body } = req.body;
 
@@ -33,11 +35,13 @@ class NoteController {
       });
       res.status(201).json(result);
     } catch (error) {
-      next(error);
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        handlePrismaError(res, error);
+      }
     }
   }
 
-  static async update(req, res, next) {
+  static async update(req, res) {
     try {
       const { ...body } = req.body;
 
@@ -49,7 +53,9 @@ class NoteController {
       });
       res.status(200).json(result);
     } catch (error) {
-      next(error);
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        handlePrismaError(res, error);
+      }
     }
   }
 

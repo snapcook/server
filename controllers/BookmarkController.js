@@ -1,5 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
-const slugify = require('slugify');
+const { PrismaClient, Prisma } = require('@prisma/client');
+
+const { handlePrismaError } = require('../validators/PrismaValidator');
 
 const prisma = new PrismaClient();
 
@@ -30,7 +31,9 @@ class CategoryController {
         });
         res.status(201).json(result);
       } catch (error) {
-        next(error);
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          handlePrismaError(res, error);
+        }
       }
     }
   }

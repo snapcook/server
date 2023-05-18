@@ -1,5 +1,7 @@
 const { Router } = require('express');
+
 const BookmarkController = require('../controllers/BookmarkController');
+const ValidateBookmark = require('../validators/BookmarkValidator');
 const {
   authentication,
   bookmarkAuthorization,
@@ -9,7 +11,7 @@ const router = Router();
 
 router.use(authentication);
 router.get('/bookmark/:id', BookmarkController.list);
-router.post('/bookmark', BookmarkController.store);
+router.post('/bookmark', ValidateBookmark, BookmarkController.store);
 router.delete(
   '/bookmark/:id',
   bookmarkAuthorization,
