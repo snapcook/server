@@ -2,15 +2,60 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-class ModelController {
-  static async predict(req, res) {
-    // This data will gathered from model
-    let ingredients = 'Jeruk';
+const listMainIngridient = [
+  {
+    name: 'Tempe',
+    tags: 'Tempe',
+  },
+  {
+    name: 'Daging Sapi',
+    tags: 'Daging sapi',
+  },
+  {
+    name: 'Wortel',
+    tags: 'carrot',
+  },
+  {
+    name: 'Apel',
+    tags: 'apple',
+  },
+  {
+    name: 'Pisang',
+    tags: 'banana',
+  },
+  {
+    name: 'Jeruk',
+    tags: 'orange',
+  },
+  {
+    name: 'Telur',
+    tags: 'egg',
+  },
+  {
+    name: 'Kentang',
+    tags: 'potato',
+  },
+];
 
+class ModelController {
+  static async predict(req, res, next) {
+    const { mainIngredients } = req.body;
+
+    const currentMainIngredients = [];
+
+    mainIngredients.forEach((ingredient) => {
+      listMainIngridient.forEach((data) => {
+        if (ingredient === data.tags) {
+          currentMainIngredients.push(data.name);
+        }
+      });
+    });
+
+    const joinMainIngredients = currentMainIngredients.join(' ');
     const result = await prisma.recipe.findMany({
       where: {
         searchMainIngredients: {
-          search: ingredients.split(' ').join(' | '),
+          search: joinMainIngredients?.split(' ').join(' | '),
         },
       },
       include: {
@@ -24,7 +69,12 @@ class ModelController {
       },
     });
 
-    res.status(200).json(result);
+    const recipe = result.map((data) => {
+      const { searchMainIngredients, ...rest } = data;
+      return rest;
+    });
+
+    res.status(200).json(recipe);
   }
 }
 
