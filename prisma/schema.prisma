@@ -42,6 +42,7 @@ model RecipeCategory {
   updatedAt DateTime @updatedAt
   name      String   @unique
   slug      String   @unique
+  photo     String
   recipes   Recipe[]
 }
 

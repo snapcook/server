@@ -24,13 +24,14 @@ class CategoryController {
   }
 
   static async store(req, res) {
-    const { name } = req.body;
+    const { name, photo } = req.body;
 
     try {
       const result = await prisma.recipeCategory.create({
         data: {
           name: name,
           slug: slugify(name, { lower: true }),
+          photo: photo,
         },
       });
       res.status(201).json(result);
@@ -42,14 +43,17 @@ class CategoryController {
   }
 
   static async update(req, res) {
+    const { name, photo } = req.body;
+
     try {
       const result = await prisma.recipeCategory.update({
         where: {
           id: req.params.id,
         },
         data: {
-          name: req.body.name,
-          slug: slugify(req.body.name, { lower: true }),
+          name: name,
+          slug: slugify(name, { lower: true }),
+          photo: req.file ? photo : undefined,
         },
       });
       res.status(200).json(result);
