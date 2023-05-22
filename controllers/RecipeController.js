@@ -49,6 +49,9 @@ class RecipeController {
             slug: true,
           },
         },
+        _count: {
+          select: { bookmarks: true },
+        },
       },
     });
 
