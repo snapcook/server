@@ -27,6 +27,16 @@ class RecipeController {
             slug: true,
           },
         },
+        secondCategory: {
+          select: {
+            id: true,
+            name: true,
+            photo: true,
+          },
+        },
+        _count: {
+          select: { bookmarks: true },
+        },
       },
     });
 
@@ -47,6 +57,13 @@ class RecipeController {
             name: true,
             photo: true,
             slug: true,
+          },
+        },
+        secondCategory: {
+          select: {
+            id: true,
+            name: true,
+            photo: true,
           },
         },
         _count: {
