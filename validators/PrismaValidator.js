@@ -18,6 +18,12 @@ function handlePrismaError(res, err) {
         field: err.meta.field_name,
         message: 'Invalid input data',
       });
+    case 'P2025':
+      // handling not found record
+      return res.status(400).json({
+        cause: err.meta.cause,
+        message: 'Record relation invalid',
+      });
     default:
       // handling all other errors
       return res.status(500).json({

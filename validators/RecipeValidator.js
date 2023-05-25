@@ -51,7 +51,7 @@ const ValidateRecipe = [
     .withMessage("spices can't be empty")
     .bail(),
   body('utensils')
-    .isArray({ min: 0 })
+    .isArray({ min: 1 })
     .bail()
     .notEmpty()
     .withMessage("utensils can't be empty")

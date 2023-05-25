@@ -19,6 +19,10 @@ function imageUpload(req, res, next) {
         imagePath = `images/category/${user.id}_${nanoid(8)}_${
           file.originalname
         }`;
+      } else if (routePath === '/utensil' || routePath === '/utensil/:id') {
+        imagePath = `images/utensil/${user.id}_${nanoid(8)}_${
+          file.originalname
+        }`;
       } else if (routePath === '/user/:id') {
         imagePath = `images/user/${user.id}_${nanoid(8)}_${file.originalname}`;
       }

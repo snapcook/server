@@ -34,6 +34,17 @@ class RecipeController {
             photo: true,
           },
         },
+        utensils: {
+          select: {
+            utensil: {
+              select: {
+                id: true,
+                name: true,
+                photo: true,
+              },
+            },
+          },
+        },
         _count: {
           select: { bookmarks: true },
         },
@@ -87,8 +98,17 @@ class RecipeController {
         totalServing,
         estimatedTime,
         mainIngredients,
+        utensils,
         ...body
       } = req.body;
+
+      const utensilData = [];
+      utensils.forEach((id) => {
+        utensilData.push({
+          assignedBy: req.loggedUser.id,
+          utensil: { connect: { id } },
+        });
+      });
 
       if (req.file) {
         const result = await prisma.recipe.create({
@@ -99,6 +119,9 @@ class RecipeController {
             estimatedTime: Number(estimatedTime),
             mainIngredients: mainIngredients,
             searchMainIngredients: mainIngredients.join(' '),
+            utensils: {
+              create: utensilData,
+            },
             ...body,
           },
         });
