@@ -139,8 +139,23 @@ class RecipeController {
 
   static async update(req, res) {
     try {
-      const { photo, totalServing, estimatedTime, mainIngredients, ...body } =
-        req.body;
+      const {
+        photo,
+        totalServing,
+        estimatedTime,
+        mainIngredients,
+        utensils,
+        ...body
+      } = req.body;
+
+      const utensilData = [];
+      utensils.forEach((id) => {
+        utensilData.push({
+          assignedBy: req.loggedUser.id,
+          recipeId: req.params.id,
+          utensilId: id,
+        });
+      });
 
       const result = await prisma.recipe.update({
         where: {
@@ -152,9 +167,15 @@ class RecipeController {
           estimatedTime: Number(estimatedTime),
           mainIngredients: mainIngredients,
           searchMainIngredients: mainIngredients.join(' '),
+          utensils: { deleteMany: {} },
           ...body,
         },
       });
+
+      await prisma.recipeUtensil.createMany({
+        data: utensilData,
+      });
+
       const { searchMainIngredients, ...recipe } = result;
       res.status(201).json(recipe);
     } catch (error) {
