@@ -35,6 +35,14 @@ const listMainIngridient = [
     name: 'Kentang',
     tags: 'potato',
   },
+  {
+    name: 'Ayam',
+    tags: 'chicken',
+  },
+  {
+    name: 'Kubis',
+    tags: 'cabbage',
+  },
 ];
 
 class ModelController {
