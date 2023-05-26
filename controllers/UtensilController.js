@@ -23,13 +23,17 @@ class UtensilController {
   }
 
   static async store(req, res) {
-    const { name, photo } = req.body;
-
     try {
-      const result = await prisma.utensil.create({
-        data: { name, photo },
-      });
-      res.status(201).json(result);
+      const { name, photo } = req.body;
+
+      if (req.file) {
+        const result = await prisma.utensil.create({
+          data: { name, photo },
+        });
+        res.status(201).json(result);
+      } else {
+        return res.status(400).json({ message: 'Please upload a photo' });
+      }
     } catch (error) {
       console.log(error);
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -39,9 +43,9 @@ class UtensilController {
   }
 
   static async update(req, res) {
-    const { name, photo } = req.body;
-
     try {
+      const { name, photo } = req.body;
+
       const result = await prisma.utensil.update({
         where: {
           id: req.params.id,
@@ -59,7 +63,7 @@ class UtensilController {
     }
   }
 
-  static async destroy(req, res, next) {
+  static async destroy(req, res) {
     try {
       await prisma.utensil.delete({
         where: {

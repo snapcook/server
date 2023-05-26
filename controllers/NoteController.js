@@ -27,9 +27,9 @@ class NoteController {
   }
 
   static async store(req, res) {
-    try {
-      const { ...body } = req.body;
+    const { ...body } = req.body;
 
+    try {
       const result = await prisma.shoppingNote.create({
         data: { ...body },
       });
@@ -42,9 +42,9 @@ class NoteController {
   }
 
   static async update(req, res) {
-    try {
-      const { ...body } = req.body;
+    const { ...body } = req.body;
 
+    try {
       const result = await prisma.shoppingNote.update({
         where: {
           id: req.params.id,

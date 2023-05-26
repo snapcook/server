@@ -1,58 +1,17 @@
 const { PrismaClient } = require('@prisma/client');
 
+const modelLabels = require('../config/label');
+
 const prisma = new PrismaClient();
 
-const listMainIngridient = [
-  {
-    name: 'Tempe',
-    tags: 'Tempe',
-  },
-  {
-    name: 'Daging Sapi',
-    tags: 'Daging sapi',
-  },
-  {
-    name: 'Wortel',
-    tags: 'carrot',
-  },
-  {
-    name: 'Apel',
-    tags: 'apple',
-  },
-  {
-    name: 'Pisang',
-    tags: 'banana',
-  },
-  {
-    name: 'Jeruk',
-    tags: 'orange',
-  },
-  {
-    name: 'Telur',
-    tags: 'egg',
-  },
-  {
-    name: 'Kentang',
-    tags: 'potato',
-  },
-  {
-    name: 'Ayam',
-    tags: 'chicken',
-  },
-  {
-    name: 'Kubis',
-    tags: 'cabbage',
-  },
-];
-
 class ModelController {
-  static async predict(req, res, next) {
+  static async predict(req, res) {
     const { mainIngredients } = req.body;
 
     const currentMainIngredients = [];
 
     mainIngredients.forEach((ingredient) => {
-      listMainIngridient.forEach((data) => {
+      modelLabels.forEach((data) => {
         if (ingredient === data.tags) {
           currentMainIngredients.push(data.name);
         }

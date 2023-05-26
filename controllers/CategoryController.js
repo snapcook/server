@@ -27,14 +27,18 @@ class CategoryController {
     const { name, photo } = req.body;
 
     try {
-      const result = await prisma.recipeCategory.create({
-        data: {
-          name: name,
-          slug: slugify(name, { lower: true }),
-          photo: photo,
-        },
-      });
-      res.status(201).json(result);
+      if (req.file) {
+        const result = await prisma.recipeCategory.create({
+          data: {
+            name: name,
+            slug: slugify(name, { lower: true }),
+            photo: photo,
+          },
+        });
+        res.status(201).json(result);
+      } else {
+        return res.status(400).json({ message: 'Please upload a photo' });
+      }
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         handlePrismaError(res, error);

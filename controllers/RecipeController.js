@@ -52,7 +52,14 @@ class RecipeController {
     });
 
     const recipe = result.map((data) => {
-      const { searchMainIngredients, ...rest } = data;
+      data.totalBookmark = data._count.bookmarks;
+
+      const utensils = data.utensils.map((item) => {
+        return item.utensil;
+      });
+      data.utensils = utensils;
+
+      const { searchMainIngredients, _count, ...rest } = data;
       return rest;
     });
 
@@ -77,6 +84,17 @@ class RecipeController {
             photo: true,
           },
         },
+        utensils: {
+          select: {
+            utensil: {
+              select: {
+                id: true,
+                name: true,
+                photo: true,
+              },
+            },
+          },
+        },
         _count: {
           select: { bookmarks: true },
         },
@@ -84,24 +102,32 @@ class RecipeController {
     });
 
     if (result) {
-      res.status(200).json(result);
+      result.totalBookmark = result._count.bookmarks;
+
+      const utensils = result.utensils.map((item) => {
+        return item.utensil;
+      });
+      result.utensils = utensils;
+
+      const { searchMainIngredients, _count, ...recipe } = result;
+      res.status(200).json(recipe);
     } else {
       res.status(404).json({ message: 'Data not found' });
     }
   }
 
   static async store(req, res) {
-    try {
-      const {
-        title,
-        slug,
-        totalServing,
-        estimatedTime,
-        mainIngredients,
-        utensils,
-        ...body
-      } = req.body;
+    const {
+      title,
+      slug,
+      totalServing,
+      estimatedTime,
+      mainIngredients,
+      utensils,
+      ...body
+    } = req.body;
 
+    try {
       const utensilData = [];
       utensils.forEach((id) => {
         utensilData.push({
@@ -138,16 +164,16 @@ class RecipeController {
   }
 
   static async update(req, res) {
-    try {
-      const {
-        photo,
-        totalServing,
-        estimatedTime,
-        mainIngredients,
-        utensils,
-        ...body
-      } = req.body;
+    const {
+      photo,
+      totalServing,
+      estimatedTime,
+      mainIngredients,
+      utensils,
+      ...body
+    } = req.body;
 
+    try {
       const utensilData = [];
       utensils.forEach((id) => {
         utensilData.push({
