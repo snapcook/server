@@ -21,7 +21,7 @@ class ModelController {
     const joinMainIngredients = currentMainIngredients.join(' ');
     const result = await prisma.recipe.findMany({
       where: {
-        searchMainIngredients: {
+        searchIngredients: {
           search: joinMainIngredients?.split(' ').join(' | '),
         },
       },
@@ -37,7 +37,7 @@ class ModelController {
     });
 
     const recipe = result.map((data) => {
-      const { searchMainIngredients, ...rest } = data;
+      const { searchIngredients, ...rest } = data;
       return rest;
     });
 

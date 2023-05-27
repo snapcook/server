@@ -59,7 +59,7 @@ class RecipeController {
       });
       data.utensils = utensils;
 
-      const { searchMainIngredients, _count, ...rest } = data;
+      const { searchIngredients, _count, ...rest } = data;
       return rest;
     });
 
@@ -109,7 +109,7 @@ class RecipeController {
       });
       result.utensils = utensils;
 
-      const { searchMainIngredients, _count, ...recipe } = result;
+      const { searchIngredients, _count, ...recipe } = result;
       res.status(200).json(recipe);
     } else {
       res.status(404).json({ message: 'Data not found' });
@@ -144,14 +144,14 @@ class RecipeController {
             totalServing: Number(totalServing),
             estimatedTime: Number(estimatedTime),
             mainIngredients: mainIngredients,
-            searchMainIngredients: mainIngredients.join(' '),
+            searchIngredients: mainIngredients.join(' '),
             utensils: {
               create: utensilData,
             },
             ...body,
           },
         });
-        const { searchMainIngredients, ...recipe } = result;
+        const { searchIngredients, ...recipe } = result;
         res.status(201).json(recipe);
       } else {
         return res.status(400).json({ message: 'Please upload a photo' });
@@ -192,7 +192,7 @@ class RecipeController {
           totalServing: Number(totalServing),
           estimatedTime: Number(estimatedTime),
           mainIngredients: mainIngredients,
-          searchMainIngredients: mainIngredients.join(' '),
+          searchIngredients: mainIngredients.join(' '),
           utensils: { deleteMany: {} },
           ...body,
         },
@@ -202,7 +202,7 @@ class RecipeController {
         data: utensilData,
       });
 
-      const { searchMainIngredients, ...recipe } = result;
+      const { searchIngredients, ...recipe } = result;
       res.status(201).json(recipe);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {

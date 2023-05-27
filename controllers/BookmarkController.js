@@ -11,10 +11,56 @@ class BookmarkController {
     const result = await prisma.bookmarks.findMany({
       where: { authorId },
       include: {
-        recipe: true,
+        recipe: {
+          include: {
+            author: {
+              select: {
+                name: true,
+                photo: true,
+                slug: true,
+              },
+            },
+            secondCategory: {
+              select: {
+                id: true,
+                name: true,
+                photo: true,
+              },
+            },
+            utensils: {
+              select: {
+                utensil: {
+                  select: {
+                    id: true,
+                    name: true,
+                    photo: true,
+                  },
+                },
+              },
+            },
+            _count: {
+              select: { bookmarks: true },
+            },
+          },
+        },
       },
     });
-    res.status(200).json(result);
+
+    const bookmark = result.map((data) => {
+      data.recipe.totalBookmark = data.recipe._count.bookmarks;
+
+      const utensils = data.recipe.utensils.map((item) => {
+        return item.utensil;
+      });
+      data.recipe.utensils = utensils;
+
+      const { _count, searchIngredients, ...restRecipe } = data.recipe;
+      data.recipe = restRecipe;
+
+      return data;
+    });
+
+    res.status(200).json(bookmark);
   }
 
   static async store(req, res) {
