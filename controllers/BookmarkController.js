@@ -89,13 +89,24 @@ class BookmarkController {
   }
 
   static async destroy(req, res, next) {
+    const recipeId = req.params.recipeId;
+    const authorId = req.loggedUser.id;
+
     try {
-      await prisma.bookmarks.delete({
+      const bookmark = await prisma.bookmarks.findFirst({
         where: {
-          id: req.params.id,
+          AND: [{ recipeId }, { authorId }],
         },
       });
-      res.status(200).json({ message: 'Bookmark deleted' });
+
+      if (bookmark) {
+        await prisma.bookmarks.delete({
+          where: { id: bookmark.id },
+        });
+        res.status(200).json({ message: 'Bookmark deleted' });
+      } else {
+        res.status(400).json({ message: 'Data not found' });
+      }
     } catch (error) {
       next(error);
     }

@@ -83,10 +83,10 @@ async function bookmarkAuthorization(req, res, next) {
   const loggedUser = req.loggedUser;
 
   if (loggedUser) {
-    const bookmarkId = req.params.id;
-    const findBookmark = await prisma.bookmarks.findUnique({
+    const recipeId = req.params.recipeId;
+    const findBookmark = await prisma.bookmarks.findFirst({
       where: {
-        id: bookmarkId,
+        AND: [{ authorId: loggedUser.id }, { recipeId }],
       },
     });
 
