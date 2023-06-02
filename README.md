@@ -1,6 +1,6 @@
-# Snapcook Server
+# Snapcook Server 🥗
 
-### Step-step
+### Instalation and Usage Steps
 
 1. Prepare the environment, clone this repo
 
@@ -42,6 +42,7 @@ npx prisma migrate dev
 ```
 
 6. Run seed
+
 ```sh
 npm run seed
 ```
