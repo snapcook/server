@@ -13,7 +13,7 @@ router.use(authentication);
 router.get('/bookmark/:id', BookmarkController.list);
 router.post('/bookmark', ValidateBookmark, BookmarkController.store);
 router.delete(
-  '/bookmark/:id',
+  '/bookmark/:recipeId',
   bookmarkAuthorization,
   BookmarkController.destroy
 );

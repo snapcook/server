@@ -9,13 +9,16 @@ const { handlePrismaError } = require('../validators/PrismaValidator');
 
 class AuthController {
   static async register(req, res) {
+    const { email, name, password } = req.body;
+    const passwordHash = generateHash(password);
+
     try {
       const result = await prisma.user.create({
         data: {
-          email: req.body.email,
-          name: req.body.name,
-          password: generateHash(req.body.password),
-          slug: slugify(req.body.name, { lower: true }),
+          email: email,
+          name: name,
+          password: passwordHash,
+          slug: slugify(name, { lower: true }),
           photo: '',
         },
       });

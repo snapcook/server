@@ -1,8 +1,8 @@
 const { Router } = require('express');
 const multer = require('multer');
 
-const CategoryController = require('../controllers/CategoryController');
-const ValidateCategory = require('../validators/CategoryValidator');
+const UtensilController = require('../controllers/UtensilController');
+const ValidateUtensil = require('../validators/UtensilValidator');
 const {
   authentication,
   adminAuthorization,
@@ -16,24 +16,23 @@ const upload = multer({
 });
 
 router.use(authentication);
-router.get('/category', CategoryController.list);
-router.get('/category/:id', adminAuthorization, CategoryController.show);
+router.get('/utensil', UtensilController.list);
+router.get('/utensil/:id', adminAuthorization, UtensilController.show);
 router.post(
-  '/category',
+  '/utensil',
   adminAuthorization,
   upload.single('photo'),
-  ValidateCategory,
   imageUpload,
-  CategoryController.store
+  UtensilController.store
 );
 router.put(
-  '/category/:id',
+  '/utensil/:id',
   adminAuthorization,
   upload.single('photo'),
-  ValidateCategory,
+  ValidateUtensil,
   imageUpload,
-  CategoryController.update
+  UtensilController.update
 );
-router.delete('/category/:id', adminAuthorization, CategoryController.destroy);
+router.delete('/utensil/:id', adminAuthorization, UtensilController.destroy);
 
 module.exports = router;

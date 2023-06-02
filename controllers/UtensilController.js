@@ -4,18 +4,14 @@ const { handlePrismaError } = require('../validators/PrismaValidator');
 
 const prisma = new PrismaClient();
 
-class NoteController {
+class UtensilController {
   static async list(req, res) {
-    const loggedUser = req.loggedUser;
-
-    const result = await prisma.shoppingNote.findMany({
-      where: { authorId: loggedUser.id },
-    });
+    const result = await prisma.utensil.findMany({});
     res.status(200).json(result);
   }
 
   static async show(req, res) {
-    const result = await prisma.shoppingNote.findUnique({
+    const result = await prisma.utensil.findUnique({
       where: { id: req.params.id },
     });
 
@@ -27,14 +23,19 @@ class NoteController {
   }
 
   static async store(req, res) {
-    const { ...body } = req.body;
-
     try {
-      const result = await prisma.shoppingNote.create({
-        data: { ...body },
-      });
-      res.status(201).json(result);
+      const { name, photo } = req.body;
+
+      if (req.file) {
+        const result = await prisma.utensil.create({
+          data: { name, photo },
+        });
+        res.status(201).json(result);
+      } else {
+        return res.status(400).json({ message: 'Please upload a photo' });
+      }
     } catch (error) {
+      console.log(error);
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         handlePrismaError(res, error);
       }
@@ -42,14 +43,17 @@ class NoteController {
   }
 
   static async update(req, res) {
-    const { ...body } = req.body;
-
     try {
-      const result = await prisma.shoppingNote.update({
+      const { name, photo } = req.body;
+
+      const result = await prisma.utensil.update({
         where: {
           id: req.params.id,
         },
-        data: { ...body },
+        data: {
+          name,
+          photo: req.file ? photo : undefined,
+        },
       });
       res.status(200).json(result);
     } catch (error) {
@@ -59,18 +63,20 @@ class NoteController {
     }
   }
 
-  static async destroy(req, res, next) {
+  static async destroy(req, res) {
     try {
-      await prisma.shoppingNote.delete({
+      await prisma.utensil.delete({
         where: {
           id: req.params.id,
         },
       });
       res.status(200).json({ message: 'Delete success' });
     } catch (error) {
-      next(error);
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        handlePrismaError(res, error);
+      }
     }
   }
 }
 
-module.exports = NoteController;
+module.exports = UtensilController;

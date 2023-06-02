@@ -42,30 +42,53 @@ model RecipeCategory {
   updatedAt DateTime @updatedAt
   name      String   @unique
   slug      String   @unique
+  photo     String
   recipes   Recipe[]
 }
 
+model Utensil {
+  id        String          @id @default(cuid())
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  name      String          @unique
+  photo     String
+  recipes   RecipeUtensil[]
+}
+
+model RecipeUtensil {
+  recipeId   String
+  recipe     Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  utensilId  String
+  utensil    Utensil  @relation(fields: [utensilId], references: [id])
+  assignedAt DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  assignedBy String
+
+  @@id([recipeId, utensilId])
+}
+
 model Recipe {
-  id                    String             @id @default(cuid())
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
-  mainCategory          RecipeMainCategory
-  secondCategoryId      String
-  secondCategory        RecipeCategory     @relation(fields: [secondCategoryId], references: [id])
-  authorId              String
-  author                User               @relation(fields: [authorId], references: [id])
-  title                 String
-  photo                 String
-  description           String
-  slug                  String             @unique
-  totalServing          Int
-  mainIngredients       String[]
-  searchMainIngredients String
-  spices                String[]
-  utensils              String[]
-  estimatedTime         Int
-  steps                 String[]
-  bookmarks             Bookmarks[]
+  id                String             @id @default(cuid())
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  mainCategory      RecipeMainCategory
+  secondCategoryId  String
+  secondCategory    RecipeCategory     @relation(fields: [secondCategoryId], references: [id])
+  authorId          String
+  author            User               @relation(fields: [authorId], references: [id])
+  title             String
+  photo             String
+  description       String
+  slug              String             @unique
+  totalServing      Int
+  mainIngredients   String[]
+  fullIngredients   String[]
+  searchIngredients String
+  spices            String[]
+  utensils          RecipeUtensil[]
+  estimatedTime     Int
+  steps             String[]
+  bookmarks         Bookmarks[]
 }
 
 model ShoppingNote {

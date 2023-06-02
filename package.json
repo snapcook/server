@@ -6,15 +6,17 @@
   "scripts": {
     "dev": "nodemon app.js",
     "seed": "node ./prisma/seed.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "author": "snapcook-developers",
   "license": "ISC",
   "dependencies": {
     "@google-cloud/storage": "^6.10.1",
-    "@prisma/client": "^4.13.0",
+    "@prisma/client": "^4.14.1",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-validator": "^7.0.1",
     "jsonwebtoken": "^9.0.0",
@@ -24,8 +26,7 @@
     "slugify": "^1.6.6"
   },
   "devDependencies": {
-    "dotenv": "^16.0.3",
     "nodemon": "^2.0.22",
-    "prisma": "^4.13.0"
+    "prisma": "^4.14.1"
   }
 }

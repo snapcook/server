@@ -27,11 +27,39 @@ class RecipeController {
             slug: true,
           },
         },
+        secondCategory: {
+          select: {
+            id: true,
+            name: true,
+            photo: true,
+          },
+        },
+        utensils: {
+          select: {
+            utensil: {
+              select: {
+                id: true,
+                name: true,
+                photo: true,
+              },
+            },
+          },
+        },
+        _count: {
+          select: { bookmarks: true },
+        },
       },
     });
 
     const recipe = result.map((data) => {
-      const { searchMainIngredients, ...rest } = data;
+      data.totalBookmark = data._count.bookmarks;
+
+      const utensils = data.utensils.map((item) => {
+        return item.utensil;
+      });
+      data.utensils = utensils;
+
+      const { searchIngredients, _count, ...rest } = data;
       return rest;
     });
 
@@ -49,6 +77,24 @@ class RecipeController {
             slug: true,
           },
         },
+        secondCategory: {
+          select: {
+            id: true,
+            name: true,
+            photo: true,
+          },
+        },
+        utensils: {
+          select: {
+            utensil: {
+              select: {
+                id: true,
+                name: true,
+                photo: true,
+              },
+            },
+          },
+        },
         _count: {
           select: { bookmarks: true },
         },
@@ -56,22 +102,39 @@ class RecipeController {
     });
 
     if (result) {
-      res.status(200).json(result);
+      result.totalBookmark = result._count.bookmarks;
+
+      const utensils = result.utensils.map((item) => {
+        return item.utensil;
+      });
+      result.utensils = utensils;
+
+      const { searchIngredients, _count, ...recipe } = result;
+      res.status(200).json(recipe);
     } else {
       res.status(404).json({ message: 'Data not found' });
     }
   }
 
   static async store(req, res) {
+    const {
+      title,
+      slug,
+      totalServing,
+      estimatedTime,
+      mainIngredients,
+      utensils,
+      ...body
+    } = req.body;
+
     try {
-      const {
-        title,
-        slug,
-        totalServing,
-        estimatedTime,
-        mainIngredients,
-        ...body
-      } = req.body;
+      const utensilData = [];
+      utensils.forEach((id) => {
+        utensilData.push({
+          assignedBy: req.loggedUser.id,
+          utensil: { connect: { id } },
+        });
+      });
 
       if (req.file) {
         const result = await prisma.recipe.create({
@@ -81,11 +144,14 @@ class RecipeController {
             totalServing: Number(totalServing),
             estimatedTime: Number(estimatedTime),
             mainIngredients: mainIngredients,
-            searchMainIngredients: mainIngredients.join(' '),
+            searchIngredients: mainIngredients.join(' '),
+            utensils: {
+              create: utensilData,
+            },
             ...body,
           },
         });
-        const { searchMainIngredients, ...recipe } = result;
+        const { searchIngredients, ...recipe } = result;
         res.status(201).json(recipe);
       } else {
         return res.status(400).json({ message: 'Please upload a photo' });
@@ -98,9 +164,24 @@ class RecipeController {
   }
 
   static async update(req, res) {
+    const {
+      photo,
+      totalServing,
+      estimatedTime,
+      mainIngredients,
+      utensils,
+      ...body
+    } = req.body;
+
     try {
-      const { photo, totalServing, estimatedTime, mainIngredients, ...body } =
-        req.body;
+      const utensilData = [];
+      utensils.forEach((id) => {
+        utensilData.push({
+          assignedBy: req.loggedUser.id,
+          recipeId: req.params.id,
+          utensilId: id,
+        });
+      });
 
       const result = await prisma.recipe.update({
         where: {
@@ -111,11 +192,17 @@ class RecipeController {
           totalServing: Number(totalServing),
           estimatedTime: Number(estimatedTime),
           mainIngredients: mainIngredients,
-          searchMainIngredients: mainIngredients.join(' '),
+          searchIngredients: mainIngredients.join(' '),
+          utensils: { deleteMany: {} },
           ...body,
         },
       });
-      const { searchMainIngredients, ...recipe } = result;
+
+      await prisma.recipeUtensil.createMany({
+        data: utensilData,
+      });
+
+      const { searchIngredients, ...recipe } = result;
       res.status(201).json(recipe);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {

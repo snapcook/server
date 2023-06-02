@@ -24,16 +24,21 @@ class CategoryController {
   }
 
   static async store(req, res) {
-    const { name } = req.body;
+    const { name, photo } = req.body;
 
     try {
-      const result = await prisma.recipeCategory.create({
-        data: {
-          name: name,
-          slug: slugify(name, { lower: true }),
-        },
-      });
-      res.status(201).json(result);
+      if (req.file) {
+        const result = await prisma.recipeCategory.create({
+          data: {
+            name: name,
+            slug: slugify(name, { lower: true }),
+            photo: photo,
+          },
+        });
+        res.status(201).json(result);
+      } else {
+        return res.status(400).json({ message: 'Please upload a photo' });
+      }
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         handlePrismaError(res, error);
@@ -42,14 +47,17 @@ class CategoryController {
   }
 
   static async update(req, res) {
+    const { name, photo } = req.body;
+
     try {
       const result = await prisma.recipeCategory.update({
         where: {
           id: req.params.id,
         },
         data: {
-          name: req.body.name,
-          slug: slugify(req.body.name, { lower: true }),
+          name: name,
+          slug: slugify(name, { lower: true }),
+          photo: req.file ? photo : undefined,
         },
       });
       res.status(200).json(result);
