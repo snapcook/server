@@ -213,6 +213,10 @@ class RecipeController {
 
   static async destroy(req, res, next) {
     try {
+      await prisma.bookmarks.deleteMany({
+        where: { recipeId: req.params.id },
+      });
+
       await prisma.recipe.delete({
         where: {
           id: req.params.id,
