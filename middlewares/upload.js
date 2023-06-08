@@ -2,10 +2,12 @@ const storage = require('../config/storage');
 const { nanoid } = require('nanoid');
 
 function imageUpload(req, res, next) {
+  const bucketName = process.env.BUCKETNAME;
+
   try {
     const file = req.file;
     const user = req.loggedUser;
-    const bucket = storage.bucket('snapcook-dev-storage');
+    const bucket = storage.bucket(bucketName);
 
     if (file) {
       let imagePath = '';

@@ -2,9 +2,10 @@ const { Storage } = require('@google-cloud/storage');
 const path = require('path');
 
 const pathKey = path.resolve('./storagekey.json');
+const gcpId = process.env.PROJECTID;
 
 const storage = new Storage({
-  projectId: 'snapcook-dev',
+  projectId: gcpId,
   keyFilename: pathKey,
 });
 
