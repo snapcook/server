@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const secret = process.env.JWTSECRET;
 
 function generateToken(payload) {
-  return jwt.sign(payload, secret, { expiresIn: '3d' });
+  return jwt.sign(payload, secret);
 }
 
 function decodeToken(token) {
